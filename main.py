@@ -1,18 +1,25 @@
+import logging
+import time
+import os
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import Optional, List
-import time
+from dotenv import load_dotenv
+
+load_dotenv()
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s — %(message)s",
+)
+logger = logging.getLogger(__name__)
 
 import model as mdl
-import utils
+import database as db_module
 
-# ── Startup ────────────────────────────────────────────────────────────────
-app = FastAPI(
-    title="Fake News Detector API",
-    description="Hybrid TF-IDF + Logistic Regression with XAI explanations",
-    version="1.0.0",
-)
+app = FastAPI(title="Fake News Detector API", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -24,83 +31,73 @@ app.add_middleware(
 @app.on_event("startup")
 def startup():
     mdl.train()
+    logger.info("ML model trained and ready")
+    # Eagerly test DB connection
+    client = db_module.get_db()
+    if client is None:
+        logger.warning("Supabase unavailable at startup — predictions won't persist")
 
-# ── Schemas ────────────────────────────────────────────────────────────────
+# ── Schemas ────────────────────────────────────────────────
 class PredictRequest(BaseModel):
-    text:  str            = Field(..., min_length=10, description="News text to classify")
-    label: Optional[int]  = Field(None, ge=0, le=1, description="Ground truth: 0=REAL, 1=FAKE")
+    text: str = Field(..., min_length=10, max_length=5000)
 
 class WordScore(BaseModel):
     word:      str
     score:     float
-    direction: str   # "fake" | "real"
+    direction: str
 
 class PredictResponse(BaseModel):
-    prediction:  str          # "FAKE" | "REAL"
+    prediction:  str
     confidence:  float
     fake_prob:   float
     real_prob:   float
-    tp_tn_fp_fn: str          # e.g. "TP=3 TN=5 FP=1 FN=0"
     explanation: List[WordScore]
     latency_ms:  float
+    db_saved:    bool
 
-class MetricsResponse(BaseModel):
-    accuracy:           float
-    precision:          float
-    recall:             float
-    f1_score:           float
-    total_predictions:  int
-    TP: int
-    TN: int
-    FP: int
-    FN: int
-
-# ── Routes ─────────────────────────────────────────────────────────────────
-@app.get("/", tags=["Health"])
+# ── Routes ─────────────────────────────────────────────────
+@app.get("/")
 def root():
-    return {"status": "ok", "message": "Fake News Detector API is running"}
+    return {"status": "ok", "message": "Fake News Detector API v2"}
 
-@app.get("/health", tags=["Health"])
+@app.get("/health")
 def health():
     return {"status": "healthy"}
 
-@app.post("/predict", response_model=PredictResponse, tags=["Detection"])
+@app.post("/predict", response_model=PredictResponse)
 def predict(req: PredictRequest):
+    logger.info(f"POST /predict — text length: {len(req.text)}")
     t0 = time.perf_counter()
 
-    if not req.text.strip():
-        raise HTTPException(status_code=400, detail="Text cannot be empty")
+    label, conf, real_prob, fake_prob = mdl.predict(req.text)
+    prediction = "FAKE" if label == 1 else "REAL"
+    words      = mdl.explain(req.text)
+    latency    = round((time.perf_counter() - t0) * 1000, 2)
 
-    label_idx, confidence, real_prob, fake_prob = mdl.predict(req.text)
-    prediction = "FAKE" if label_idx == 1 else "REAL"
+    logger.info(f"Prediction: {prediction} @ {conf:.4f} in {latency}ms")
 
-    # Update confusion matrix only when ground truth is provided
-    if req.label is not None:
-        utils.update_matrix(predicted=label_idx, actual=req.label)
-
-    words = mdl.explain(req.text)
-    latency = round((time.perf_counter() - t0) * 1000, 2)
+    # ── Persist to Supabase (never crashes the response) ──
+    saved = False
+    try:
+        saved = db_module.save_prediction(req.text, prediction, conf)
+        logger.info(f"DB save: {'OK' if saved else 'FAILED'}")
+    except Exception as e:
+        logger.error(f"Unexpected DB error: {e}")
 
     return PredictResponse(
         prediction=prediction,
-        confidence=round(confidence, 4),
+        confidence=round(conf, 4),
         fake_prob=round(fake_prob, 4),
         real_prob=round(real_prob, 4),
-        tp_tn_fp_fn=utils.matrix_string(),
         explanation=[WordScore(**w) for w in words],
         latency_ms=latency,
+        db_saved=saved,
     )
 
-@app.get("/metrics", response_model=MetricsResponse, tags=["Analytics"])
-def metrics():
-    return utils.compute_metrics()
+@app.get("/history")
+def history(limit: int = 50):
+    return db_module.fetch_history(limit)
 
-@app.get("/matrix", tags=["Analytics"])
-def matrix():
-    return utils.get_matrix()
-
-@app.post("/reset", tags=["Analytics"])
-def reset():
-    """Reset confusion matrix counters."""
-    utils._matrix.update({"TP": 0, "TN": 0, "FP": 0, "FN": 0})
-    return {"message": "Matrix reset successfully"}
+@app.get("/stats")
+def stats():
+    return db_module.fetch_stats()
