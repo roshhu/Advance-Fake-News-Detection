@@ -129,13 +129,19 @@ Lightweight serverless architecture
 Secure deployment environment
 Scalable cloud infrastructure
 Production-ready backend structure
+
 📸 Screenshots
 
 Add project screenshots here
 
-![Home Page](images/homepage.png)
-![Prediction Result](images/result.png)
+![Home Page]
+<img width="1440" height="900" alt="Screenshot 2026-05-06 at 12 57 58 PM" src="https://github.com/user-attachments/assets/7bc07c3d-e526-4ea2-a722-365d5087df74" />
+
+![Prediction Result]
+<img width="1440" height="900" alt="Screenshot 2026-05-06 at 1 00 29 PM" src="https://github.com/user-attachments/assets/7d29c3bc-8766-4eca-b5ac-cc45af8da94e" />
+
 👨‍💻 Team Contributions
+
 🔹 Shaik Roshan (22BTRSN051)
 Major Contributor & Project Lead
 Project Architecture Design
@@ -146,21 +152,25 @@ Frontend Integration
 API Development
 GitHub Repository Management
 Overall Project Coordination
+
 🔹 Motupalli Puneeth (22BTRSN034)
 Frontend Design Support
 UI Enhancement
 Documentation Assistance
 Testing Support
+
 🔹 Sama Nithin Reddy (22BTRSN049)
 Research & Data Collection
 Requirement Analysis
 Testing and Validation
 Presentation Support
 🔹 Kushal S (22BTRSN029)
+
 Documentation Preparation
 Report Formatting
 UI Testing
 Project Presentation Assistance
+
 📚 Future Enhancements
 Real-time News Verification
 Social Media News Detection
@@ -168,7 +178,9 @@ Multilingual Fake News Detection
 Advanced Explainable AI Visualization
 Deep Learning Model Improvements
 Mobile Application Integration
-🏆 Academic Project
+
+
+🏆 Academic Project<img width="1440" height="900" alt="Screenshot 2026-05-06 at 12 59 45 PM" src="https://github.com/user-attachments/assets/5f8cb2de-5b9b-4f48-8542-6a01c0448ee7" />
 
 This project was developed as part of the Final Year B.Tech Project in Software Engineering / Cyber Security Domain.
 
