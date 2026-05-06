@@ -1,4 +1,4 @@
-# 🧠 Advancing Fake News Detection using Hybrid Deep Learning with Explainable AI
+#  Advancing Fake News Detection using Hybrid Deep Learning with Explainable AI
 
 <div align="center">
 
@@ -8,7 +8,7 @@
 ![Machine Learning](https://img.shields.io/badge/ML-Hybrid%20Model-orange?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Live-success?style=for-the-badge)
 
-### 🚀 AI-Powered Fake News Detection Platform with Explainable AI
+###  AI-Powered Fake News Detection Platform with Explainable AI
 
 </div>
 
