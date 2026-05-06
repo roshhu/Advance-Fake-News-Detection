@@ -143,7 +143,6 @@ Add project screenshots here
 👨‍💻 Team Contributions
 
 🔹 Shaik Roshan (22BTRSN051)
-Major Contributor & Project Lead
 Project Architecture Design
 Backend Development using FastAPI
 AI/ML Model Integration
