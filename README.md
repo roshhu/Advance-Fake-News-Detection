@@ -163,8 +163,8 @@ Research & Data Collection
 Requirement Analysis
 Testing and Validation
 Presentation Support
-🔹 Kushal S (22BTRSN029)
 
+🔹 Kushal S (22BTRSN029)
 Documentation Preparation
 Report Formatting
 UI Testing
