@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Base ─────────────────────────────────────────────── */
+:root { color-scheme: dark; }
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+body {
+  background: #080b14;
+  color: #e8eaf0;
+  font-family: 'Space Mono', monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Glass card ────────────────────────────────────────── */
+.glass {
+  background: rgba(22, 29, 46, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ── Gradient text ─────────────────────────────────────── */
+.grad-text {
+  background: linear-gradient(135deg, #00d4aa, #0099ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ── Spinner ───────────────────────────────────────────── */
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(0, 212, 170, 0.15);
+  border-top-color: #00d4aa;
+  border-radius: 50%;
+  animation: spin 0.75s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── XAI word highlights — FAKE (red) ─────────────────── */
+.word-high-fake {
+  background: rgba(239, 68, 68, 0.22);
+  color: #fca5a5;
+  border-radius: 4px;
+  padding: 1px 4px;
+  border-bottom: 2px solid rgba(239, 68, 68, 0.55);
+  cursor: default;
+  transition: background 0.15s;
+}
+.word-high-fake:hover { background: rgba(239, 68, 68, 0.32); }
+
+.word-mid-fake {
+  background: rgba(239, 68, 68, 0.10);
+  color: #fca5a5;
+  border-radius: 4px;
+  padding: 1px 4px;
+  border-bottom: 2px solid rgba(239, 68, 68, 0.22);
+  cursor: default;
+}
+
+/* ── XAI word highlights — REAL (green) ───────────────── */
+.word-high-real {
+  background: rgba(16, 185, 129, 0.22);
+  color: #6ee7b7;
+  border-radius: 4px;
+  padding: 1px 4px;
+  border-bottom: 2px solid rgba(16, 185, 129, 0.55);
+  cursor: default;
+  transition: background 0.15s;
+}
+.word-high-real:hover { background: rgba(16, 185, 129, 0.32); }
+
+.word-mid-real {
+  background: rgba(16, 185, 129, 0.10);
+  color: #6ee7b7;
+  border-radius: 4px;
+  padding: 1px 4px;
+  border-bottom: 2px solid rgba(16, 185, 129, 0.22);
+  cursor: default;
+}
+
+/* ── Scrollbar ─────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: #0d1220; }
+::-webkit-scrollbar-thumb  { background: #1c2538; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #243048; }
